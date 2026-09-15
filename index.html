@@ -33,21 +33,15 @@
     color: var(--gray-caption);
     margin: 0 0 6px;
   }
-  h1 {
-    font-size: 30px;
-    font-weight: bold;
-    margin: 0 0 6px;
-  }
-  .subtitle {
-    font-size: 15px;
-    color: var(--gray-caption);
+  h1 { font-size: 30px; font-weight: bold; margin: 0 0 6px; }
+  .subtitle { font-size: 15px; color: var(--gray-caption); margin: 0 0 6px; }
+  .instructions {
+    font-size: 14px;
+    color: var(--gray-body);
+    font-style: italic;
     margin: 0 0 16px;
   }
-  .rule {
-    border: none;
-    border-top: 1px solid var(--gray-rule);
-    margin: 0 0 28px;
-  }
+  .rule { border: none; border-top: 1px solid var(--gray-rule); margin: 0 0 28px; }
 
   .progress-row {
     display: flex;
@@ -63,19 +57,21 @@
   }
   .dots { display: flex; gap: 8px; }
   .dot {
-    width: 8px; height: 8px; border-radius: 50%;
+    width: 11px; height: 11px; border-radius: 50%;
     background: var(--gray-rule);
-    transition: background 0.2s ease;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
   }
-  .dot.active { background: var(--gold); }
-  .dot.done { background: var(--black); }
+  .dot.current { border-color: var(--gold); }
+  .dot.nailed { background: var(--gold); }
+  .dot.partial { background: var(--white); border-color: var(--black); }
+  .dot.missed { background: var(--black); }
 
   .card-scene {
     perspective: 1600px;
     width: 100%;
-    height: 320px;
-    margin-bottom: 24px;
-    cursor: pointer;
+    height: 340px;
+    margin-bottom: 20px;
   }
   .card {
     position: relative;
@@ -92,17 +88,11 @@
     border-radius: 12px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding: 40px 44px;
+    justify-content: flex-start;
+    padding: 32px 40px;
   }
-  .face-front {
-    background: var(--box-fill);
-    border: 1px solid var(--gray-rule);
-  }
-  .face-back {
-    background: var(--black);
-    transform: rotateY(180deg);
-  }
+  .face-front { background: var(--box-fill); border: 1px solid var(--gray-rule); }
+  .face-back { background: var(--black); transform: rotateY(180deg); }
   .face-label {
     font-size: 12px;
     font-weight: bold;
@@ -111,26 +101,61 @@
   }
   .face-front .face-label { color: var(--gold); }
   .face-back .face-label { color: var(--gold); }
-  .face-text {
-    font-size: 22px;
-    font-weight: bold;
-    line-height: 1.35;
-  }
+  .face-text { font-size: 21px; font-weight: bold; line-height: 1.35; margin: 0; }
   .face-front .face-text { color: var(--black); }
-  .face-back .face-text {
-    color: var(--white);
-    font-size: 18px;
-    font-weight: normal;
-  }
-  .tap-hint {
-    position: absolute;
-    bottom: 16px;
-    left: 44px;
-    font-size: 12px;
+  .face-back .face-text { color: var(--white); font-size: 17px; font-weight: normal; margin-bottom: 18px; }
+
+  .prompt-line {
+    margin-top: auto;
+    font-size: 13px;
     color: var(--gray-caption);
     font-style: italic;
   }
-  .face-back .tap-hint { color: #A8A8A8; }
+
+  .reveal-btn {
+    margin-top: auto;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 13px 20px;
+    cursor: pointer;
+    border: none;
+    background: var(--gold);
+    color: var(--black);
+    width: 100%;
+  }
+  .reveal-btn:disabled {
+    background: var(--gray-rule);
+    color: var(--gray-caption);
+    cursor: default;
+  }
+
+  .rate-row { margin-top: auto; }
+  .rate-label {
+    font-size: 12px;
+    color: #B8B8B8;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+  .rate-buttons { display: flex; gap: 8px; }
+  .rate-btn {
+    flex: 1;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 11px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1.5px solid #444;
+    background: transparent;
+    color: var(--white);
+    transition: all 0.15s ease;
+  }
+  .rate-btn:hover { border-color: var(--gold); }
+  .rate-btn.selected-nailed { background: var(--gold); border-color: var(--gold); color: var(--black); }
+  .rate-btn.selected-partial { background: var(--white); border-color: var(--white); color: var(--black); }
+  .rate-btn.selected-missed { background: #444; border-color: #444; color: var(--white); }
 
   .controls {
     display: flex;
@@ -138,30 +163,28 @@
     justify-content: space-between;
     gap: 12px;
   }
-  button {
+  button.nav {
     font-family: inherit;
     font-size: 15px;
     font-weight: bold;
     border-radius: 8px;
     padding: 12px 20px;
     cursor: pointer;
-    border: 1px solid transparent;
-    transition: opacity 0.15s ease;
-  }
-  button:disabled { opacity: 0.35; cursor: default; }
-  button:not(:disabled):hover { opacity: 0.85; }
-
-  .btn-nav {
+    border: 1px solid var(--gray-rule);
     background: var(--white);
     color: var(--black);
-    border-color: var(--gray-rule);
+    transition: opacity 0.15s ease;
   }
-  .btn-flip {
-    background: var(--gold);
-    color: var(--black);
+  button.nav:disabled { opacity: 0.35; cursor: default; }
+  button.nav:not(:disabled):hover { opacity: 0.8; }
+  .btn-next {
     flex: 1;
     text-align: center;
+    background: var(--black) !important;
+    color: var(--white) !important;
+    border-color: var(--black) !important;
   }
+  .btn-next:disabled { background: var(--gray-rule) !important; color: var(--gray-caption) !important; border-color: var(--gray-rule) !important; }
 
   .footer {
     margin-top: 40px;
@@ -171,22 +194,71 @@
     color: var(--gray-caption);
   }
 
-  .done-banner {
-    display: none;
+  /* Summary view */
+  .summary { display: none; }
+  .summary.show { display: block; }
+  .summary-heading { font-size: 20px; font-weight: bold; margin: 0 0 4px; }
+  .summary-sub { font-size: 14px; color: var(--gray-caption); margin: 0 0 20px; }
+  .summary-item {
+    border: 1px solid var(--gray-rule);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    background: var(--box-fill);
+  }
+  .summary-item.flag { background: var(--white); border-color: var(--black); }
+  .summary-item-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .summary-q { font-weight: bold; font-size: 15px; margin: 0; }
+  .badge {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+  .badge-nailed { background: var(--gold); color: var(--black); }
+  .badge-partial { background: var(--white); color: var(--black); border: 1.5px solid var(--black); }
+  .badge-missed { background: var(--black); color: var(--white); }
+  .summary-a { font-size: 14px; color: var(--gray-body); margin: 10px 0 0; }
+
+  .bring-box {
+    background: var(--black);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin: 24px 0;
+  }
+  .bring-box p { margin: 0; color: var(--white); font-size: 15px; font-weight: bold; }
+  .bring-box .bring-sub { color: #B8B8B8; font-weight: normal; font-size: 13px; margin-top: 4px; }
+
+  .all-good {
     background: var(--box-fill);
     border: 1px solid var(--gray-rule);
     border-radius: 10px;
     padding: 18px 20px;
-    font-size: 14px;
-    color: var(--gray-body);
-    margin-bottom: 24px;
+    margin: 24px 0;
+    font-size: 15px;
+    font-weight: bold;
   }
-  .done-banner.show { display: block; }
+
+  .restart-btn {
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 13px 20px;
+    cursor: pointer;
+    border: 1px solid var(--gray-rule);
+    background: var(--white);
+    color: var(--black);
+    width: 100%;
+  }
+  .restart-btn:hover { opacity: 0.8; }
 
   @media (max-width: 480px) {
-    .card-scene { height: 380px; }
-    .face { padding: 28px 26px; }
-    .face-text { font-size: 19px; }
+    .card-scene { height: 400px; }
+    .face { padding: 24px 24px; }
+    .face-text { font-size: 18px; }
   }
 </style>
 </head>
@@ -195,36 +267,50 @@
     <p class="kicker">MGT 300 &middot; ORGANIZATIONAL BEHAVIOR</p>
     <h1>Retrieve What You Remember</h1>
     <p class="subtitle">Chapter 4, Class 1 &mdash; Emotions &amp; Emotional Intelligence</p>
+    <p class="instructions">Think through your own answer before you reveal each one &mdash; then rate yourself honestly.</p>
     <hr class="rule" />
 
-    <div class="progress-row">
-      <span class="progress-text" id="progressText">CARD 1 OF 4</span>
-      <div class="dots" id="dots"></div>
-    </div>
+    <div id="cardView">
+      <div class="progress-row">
+        <span class="progress-text" id="progressText">CARD 1 OF 4</span>
+        <div class="dots" id="dots"></div>
+      </div>
 
-    <div class="done-banner" id="doneBanner">
-      That's all four. Flip back through any you want to revisit, then compare answers with your group.
-    </div>
+      <div class="card-scene">
+        <div class="card" id="card">
+          <div class="face face-front">
+            <p class="face-label">QUESTION</p>
+            <p class="face-text" id="frontText"></p>
+            <button class="reveal-btn" id="revealBtn">Reveal in 3</button>
+          </div>
+          <div class="face face-back">
+            <p class="face-label">ANSWER</p>
+            <p class="face-text" id="backText"></p>
+            <div class="rate-row">
+              <p class="rate-label">Be honest &mdash; how did you do?</p>
+              <div class="rate-buttons">
+                <button class="rate-btn" data-rate="nailed">Nailed it</button>
+                <button class="rate-btn" data-rate="partial">Partial</button>
+                <button class="rate-btn" data-rate="missed">Missed it</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <div class="card-scene" id="cardScene">
-      <div class="card" id="card">
-        <div class="face face-front">
-          <p class="face-label">QUESTION</p>
-          <p class="face-text" id="frontText"></p>
-          <p class="tap-hint">Tap to reveal the answer</p>
-        </div>
-        <div class="face face-back">
-          <p class="face-label">ANSWER</p>
-          <p class="face-text" id="backText"></p>
-          <p class="tap-hint">Tap to flip back</p>
-        </div>
+      <div class="controls">
+        <button class="nav" id="prevBtn">&larr; Prev</button>
+        <button class="nav btn-next" id="nextBtn" disabled>Rate to continue</button>
       </div>
     </div>
 
-    <div class="controls">
-      <button class="btn-nav" id="prevBtn">&larr; Prev</button>
-      <button class="btn-flip" id="flipBtn">Flip Card</button>
-      <button class="btn-nav" id="nextBtn">Next &rarr;</button>
+    <div class="summary" id="summaryView">
+      <p class="summary-heading">Here's how it went</p>
+      <p class="summary-sub" id="summarySub"></p>
+      <div id="summaryList"></div>
+      <div id="bringForward"></div>
+      <p class="instructions" id="groupInstructions" style="margin: 0 0 20px;"></p>
+      <button class="restart-btn" id="restartBtn">Review Cards Again</button>
     </div>
 
     <p class="footer">MGT 300 &middot; Class 1: Emotions &amp; Emotional Intelligence &mdash; Retrieval Practice</p>
@@ -252,7 +338,8 @@
 
   let idx = 0;
   let flipped = false;
-  let seen = new Set();
+  let ratings = new Array(cards.length).fill(null);
+  let countdownTimer = null;
 
   const cardEl = document.getElementById('card');
   const frontText = document.getElementById('frontText');
@@ -261,19 +348,37 @@
   const dotsEl = document.getElementById('dots');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
-  const flipBtn = document.getElementById('flipBtn');
-  const cardScene = document.getElementById('cardScene');
-  const doneBanner = document.getElementById('doneBanner');
+  const revealBtn = document.getElementById('revealBtn');
+  const rateBtns = document.querySelectorAll('.rate-btn');
+  const cardView = document.getElementById('cardView');
+  const summaryView = document.getElementById('summaryView');
 
   function renderDots() {
     dotsEl.innerHTML = '';
     cards.forEach((_, i) => {
       const d = document.createElement('div');
       d.className = 'dot';
-      if (i === idx) d.className += ' active';
-      else if (seen.has(i)) d.className += ' done';
+      if (i === idx) d.className += ' current';
+      if (ratings[i]) d.className += ' ' + ratings[i];
       dotsEl.appendChild(d);
     });
+  }
+
+  function startCountdown() {
+    clearInterval(countdownTimer);
+    let n = 3;
+    revealBtn.disabled = true;
+    revealBtn.textContent = `Reveal in ${n}`;
+    countdownTimer = setInterval(() => {
+      n -= 1;
+      if (n <= 0) {
+        clearInterval(countdownTimer);
+        revealBtn.disabled = false;
+        revealBtn.textContent = 'Reveal Answer';
+      } else {
+        revealBtn.textContent = `Reveal in ${n}`;
+      }
+    }, 1000);
   }
 
   function render() {
@@ -282,33 +387,102 @@
     cardEl.classList.toggle('flipped', flipped);
     progressText.textContent = `CARD ${idx + 1} OF ${cards.length}`;
     prevBtn.disabled = idx === 0;
-    nextBtn.disabled = idx === cards.length - 1;
+
+    const isLast = idx === cards.length - 1;
+    const rated = !!ratings[idx];
+    nextBtn.disabled = !rated;
+    nextBtn.textContent = rated ? (isLast ? 'See Summary' : 'Next \u2192') : 'Rate to continue';
+
+    rateBtns.forEach((btn) => {
+      btn.classList.remove('selected-nailed', 'selected-partial', 'selected-missed');
+      if (ratings[idx] === btn.dataset.rate) btn.classList.add('selected-' + btn.dataset.rate);
+    });
+
     renderDots();
-    doneBanner.classList.toggle('show', seen.size === cards.length);
+
+    if (!flipped) startCountdown();
+    else clearInterval(countdownTimer);
   }
 
-  function flip() {
-    flipped = !flipped;
-    if (flipped) seen.add(idx);
+  function reveal() {
+    if (revealBtn.disabled) return;
+    flipped = true;
+    render();
+  }
+
+  function rate(value) {
+    ratings[idx] = value;
     render();
   }
 
   function goTo(newIdx) {
-    if (newIdx < 0 || newIdx >= cards.length) return;
+    if (newIdx < 0) return;
+    if (newIdx >= cards.length) { showSummary(); return; }
     idx = newIdx;
     flipped = false;
     render();
   }
 
-  cardScene.addEventListener('click', flip);
-  flipBtn.addEventListener('click', (e) => { e.stopPropagation(); flip(); });
-  prevBtn.addEventListener('click', (e) => { e.stopPropagation(); goTo(idx - 1); });
-  nextBtn.addEventListener('click', (e) => { e.stopPropagation(); goTo(idx + 1); });
+  function showSummary() {
+    cardView.style.display = 'none';
+    summaryView.classList.add('show');
+
+    const counts = { nailed: 0, partial: 0, missed: 0 };
+    ratings.forEach((r) => { if (r) counts[r]++; });
+    document.getElementById('summarySub').textContent =
+      `${counts.nailed} nailed \u00b7 ${counts.partial} partial \u00b7 ${counts.missed} missed`;
+
+    const listEl = document.getElementById('summaryList');
+    listEl.innerHTML = '';
+    cards.forEach((c, i) => {
+      const r = ratings[i];
+      const flagged = r === 'partial' || r === 'missed';
+      const item = document.createElement('div');
+      item.className = 'summary-item' + (flagged ? ' flag' : '');
+      const badgeLabel = r === 'nailed' ? 'Nailed it' : r === 'partial' ? 'Partial' : 'Missed it';
+      item.innerHTML = `
+        <div class="summary-item-top">
+          <p class="summary-q">${c.q}</p>
+          <span class="badge badge-${r}">${badgeLabel}</span>
+        </div>
+        ${flagged ? `<p class="summary-a">${c.a}</p>` : ''}
+      `;
+      listEl.appendChild(item);
+    });
+
+    const bringEl = document.getElementById('bringForward');
+    const flaggedQs = cards.filter((_, i) => ratings[i] === 'partial' || ratings[i] === 'missed');
+    if (flaggedQs.length > 0) {
+      bringEl.innerHTML = `
+        <div class="bring-box">
+          <p>Bring these to your group discussion:</p>
+          <p class="bring-sub">${flaggedQs.map(c => c.q).join(' &middot; ')}</p>
+        </div>`;
+    } else {
+      bringEl.innerHTML = `<div class="all-good">All four, nailed. Nice \u2014 compare notes with your group anyway.</div>`;
+    }
+
+    document.getElementById('groupInstructions').innerHTML =
+      'In your group: start with what you flagged, not the full list. For each concept, come up with a real example from a job you\u2019ve had \u2014 not one from class.';
+  }
+
+  revealBtn.addEventListener('click', reveal);
+  rateBtns.forEach((btn) => btn.addEventListener('click', () => rate(btn.dataset.rate)));
+  prevBtn.addEventListener('click', () => goTo(idx - 1));
+  nextBtn.addEventListener('click', () => goTo(idx + 1));
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    idx = 0;
+    flipped = false;
+    cardView.style.display = 'block';
+    summaryView.classList.remove('show');
+    render();
+  });
 
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') goTo(idx + 1);
-    else if (e.key === 'ArrowLeft') goTo(idx - 1);
-    else if (e.key === ' ') { e.preventDefault(); flip(); }
+    if (e.key === 'ArrowRight' && !nextBtn.disabled) goTo(idx + 1);
+    else if (e.key === 'ArrowLeft' && !prevBtn.disabled) goTo(idx - 1);
+    else if (e.key === ' ') { e.preventDefault(); if (!flipped) reveal(); }
   });
 
   render();
