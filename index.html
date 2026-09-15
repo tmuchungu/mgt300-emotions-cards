@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Retrieve What You Remember — MGT 300, Chapter 4 Class 1</title>
+<style>
+  :root {
+    --gold: #FFC72C;
+    --black: #000000;
+    --white: #FFFFFF;
+    --gray-caption: #6B6B6B;
+    --gray-rule: #D9D9D9;
+    --gray-body: #222222;
+    --box-fill: #FAFAFA;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--white);
+    color: var(--black);
+    display: flex;
+    justify-content: center;
+    padding: 48px 20px 80px;
+  }
+  .wrap { width: 100%; max-width: 720px; }
+
+  .kicker {
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1.2px;
+    color: var(--gray-caption);
+    margin: 0 0 6px;
+  }
+  h1 {
+    font-size: 30px;
+    font-weight: bold;
+    margin: 0 0 6px;
+  }
+  .subtitle {
+    font-size: 15px;
+    color: var(--gray-caption);
+    margin: 0 0 16px;
+  }
+  .rule {
+    border: none;
+    border-top: 1px solid var(--gray-rule);
+    margin: 0 0 28px;
+  }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .progress-text {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--gray-caption);
+    letter-spacing: 0.5px;
+  }
+  .dots { display: flex; gap: 8px; }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gray-rule);
+    transition: background 0.2s ease;
+  }
+  .dot.active { background: var(--gold); }
+  .dot.done { background: var(--black); }
+
+  .card-scene {
+    perspective: 1600px;
+    width: 100%;
+    height: 320px;
+    margin-bottom: 24px;
+    cursor: pointer;
+  }
+  .card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 44px;
+  }
+  .face-front {
+    background: var(--box-fill);
+    border: 1px solid var(--gray-rule);
+  }
+  .face-back {
+    background: var(--black);
+    transform: rotateY(180deg);
+  }
+  .face-label {
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1.2px;
+    margin-bottom: 14px;
+  }
+  .face-front .face-label { color: var(--gold); }
+  .face-back .face-label { color: var(--gold); }
+  .face-text {
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 1.35;
+  }
+  .face-front .face-text { color: var(--black); }
+  .face-back .face-text {
+    color: var(--white);
+    font-size: 18px;
+    font-weight: normal;
+  }
+  .tap-hint {
+    position: absolute;
+    bottom: 16px;
+    left: 44px;
+    font-size: 12px;
+    color: var(--gray-caption);
+    font-style: italic;
+  }
+  .face-back .tap-hint { color: #A8A8A8; }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  button {
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 12px 20px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: opacity 0.15s ease;
+  }
+  button:disabled { opacity: 0.35; cursor: default; }
+  button:not(:disabled):hover { opacity: 0.85; }
+
+  .btn-nav {
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--gray-rule);
+  }
+  .btn-flip {
+    background: var(--gold);
+    color: var(--black);
+    flex: 1;
+    text-align: center;
+  }
+
+  .footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gray-rule);
+    font-size: 11px;
+    color: var(--gray-caption);
+  }
+
+  .done-banner {
+    display: none;
+    background: var(--box-fill);
+    border: 1px solid var(--gray-rule);
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-size: 14px;
+    color: var(--gray-body);
+    margin-bottom: 24px;
+  }
+  .done-banner.show { display: block; }
+
+  @media (max-width: 480px) {
+    .card-scene { height: 380px; }
+    .face { padding: 28px 26px; }
+    .face-text { font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="kicker">MGT 300 &middot; ORGANIZATIONAL BEHAVIOR</p>
+    <h1>Retrieve What You Remember</h1>
+    <p class="subtitle">Chapter 4, Class 1 &mdash; Emotions &amp; Emotional Intelligence</p>
+    <hr class="rule" />
+
+    <div class="progress-row">
+      <span class="progress-text" id="progressText">CARD 1 OF 4</span>
+      <div class="dots" id="dots"></div>
+    </div>
+
+    <div class="done-banner" id="doneBanner">
+      That's all four. Flip back through any you want to revisit, then compare answers with your group.
+    </div>
+
+    <div class="card-scene" id="cardScene">
+      <div class="card" id="card">
+        <div class="face face-front">
+          <p class="face-label">QUESTION</p>
+          <p class="face-text" id="frontText"></p>
+          <p class="tap-hint">Tap to reveal the answer</p>
+        </div>
+        <div class="face face-back">
+          <p class="face-label">ANSWER</p>
+          <p class="face-text" id="backText"></p>
+          <p class="tap-hint">Tap to flip back</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn-nav" id="prevBtn">&larr; Prev</button>
+      <button class="btn-flip" id="flipBtn">Flip Card</button>
+      <button class="btn-nav" id="nextBtn">Next &rarr;</button>
+    </div>
+
+    <p class="footer">MGT 300 &middot; Class 1: Emotions &amp; Emotional Intelligence &mdash; Retrieval Practice</p>
+  </div>
+
+<script>
+  const cards = [
+    {
+      q: "How are emotions different from attitudes?",
+      a: "Emotions are brief, mostly automatic feelings triggered by something in the environment. Attitudes are more stable combinations of beliefs, feelings, and intentions that build up over time \u2014 not seconds."
+    },
+    {
+      q: "What is emotional labor?",
+      a: "The effort it takes to display the emotion a job requires, even when it doesn\u2019t match what you actually feel \u2014 like a barista sounding cheerful with every customer, on the busiest and calmest days alike."
+    },
+    {
+      q: "What is the difference between surface acting and deep acting?",
+      a: "Surface acting fakes the required emotion on the outside without changing how you feel inside. Deep acting is actually working to change your internal feelings so the required emotion becomes genuine."
+    },
+    {
+      q: "What are the four dimensions of emotional intelligence?",
+      a: "Awareness of your own emotions, management of your own emotions, awareness of others\u2019 emotions, and management of others\u2019 emotions."
+    }
+  ];
+
+  let idx = 0;
+  let flipped = false;
+  let seen = new Set();
+
+  const cardEl = document.getElementById('card');
+  const frontText = document.getElementById('frontText');
+  const backText = document.getElementById('backText');
+  const progressText = document.getElementById('progressText');
+  const dotsEl = document.getElementById('dots');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const flipBtn = document.getElementById('flipBtn');
+  const cardScene = document.getElementById('cardScene');
+  const doneBanner = document.getElementById('doneBanner');
+
+  function renderDots() {
+    dotsEl.innerHTML = '';
+    cards.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'dot';
+      if (i === idx) d.className += ' active';
+      else if (seen.has(i)) d.className += ' done';
+      dotsEl.appendChild(d);
+    });
+  }
+
+  function render() {
+    frontText.textContent = cards[idx].q;
+    backText.textContent = cards[idx].a;
+    cardEl.classList.toggle('flipped', flipped);
+    progressText.textContent = `CARD ${idx + 1} OF ${cards.length}`;
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === cards.length - 1;
+    renderDots();
+    doneBanner.classList.toggle('show', seen.size === cards.length);
+  }
+
+  function flip() {
+    flipped = !flipped;
+    if (flipped) seen.add(idx);
+    render();
+  }
+
+  function goTo(newIdx) {
+    if (newIdx < 0 || newIdx >= cards.length) return;
+    idx = newIdx;
+    flipped = false;
+    render();
+  }
+
+  cardScene.addEventListener('click', flip);
+  flipBtn.addEventListener('click', (e) => { e.stopPropagation(); flip(); });
+  prevBtn.addEventListener('click', (e) => { e.stopPropagation(); goTo(idx - 1); });
+  nextBtn.addEventListener('click', (e) => { e.stopPropagation(); goTo(idx + 1); });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') goTo(idx + 1);
+    else if (e.key === 'ArrowLeft') goTo(idx - 1);
+    else if (e.key === ' ') { e.preventDefault(); flip(); }
+  });
+
+  render();
+</script>
+</body>
+</html>
